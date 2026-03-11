@@ -85,17 +85,47 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Response create(Order order, HttpHeaders headers) {
+
+        long start = System.currentTimeMillis();
+
         OrderServiceImpl.LOGGER.info("[create][Create Order][Ready to Create Order]");
+
+        if ("true".equals(System.getenv("PYTHIA_INJECT_DELAY"))) {
+            try {
+                if (Math.random() < 0.3) {   // 30% of requests
+                    Thread.sleep(300);      // 300ms delay
+                    OrderServiceImpl.LOGGER.info("[PYTHIA_DELAY] artificial_delay=300ms");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         ArrayList<Order> accountOrders = orderRepository.findByAccountId(order.getAccountId());
+
+        Response result;
+
         if (accountOrders.contains(order)) {
             OrderServiceImpl.LOGGER.error("[create][Order Create Fail][Order already exists][OrderId: {}]", order.getId());
-            return new Response<>(0, "Order already exist", null);
+            result = new Response<>(0, "Order already exist", null);
         } else {
             order.setId(UUID.randomUUID().toString());
-            order=orderRepository.save(order);
-            OrderServiceImpl.LOGGER.info("[create][Order Create Success][Order Price][OrderId:{} , Price: {}]",order.getId(),order.getPrice());
-            return new Response<>(1, success, order);
+            order = orderRepository.save(order);
+            OrderServiceImpl.LOGGER.info("[create][Order Create Success][Order Price][OrderId:{} , Price: {}]", order.getId(), order.getPrice());
+            result = new Response<>(1, success, order);
         }
+
+        long end = System.currentTimeMillis();
+
+        if ("true".equals(System.getenv("PYTHIA_FINE_TRACE"))) {
+            long latency = end - start;
+            OrderServiceImpl.LOGGER.info(
+                    "[PYTHIA_FINE_TRACE] service=ts-order-service stage=service_create latency_ms={}",
+                    latency
+            );
+        }
+
+        return result;
     }
 
     @Override

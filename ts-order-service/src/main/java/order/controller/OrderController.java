@@ -43,8 +43,24 @@ public class OrderController {
     @CrossOrigin(origins = "*")
     @PostMapping(path = "/order")
     public HttpEntity createNewOrder(@RequestBody Order createOrder, @RequestHeader HttpHeaders headers) {
-        OrderController.LOGGER.info("[createNewOrder][Create Order][from {} to {} at {}]", createOrder.getFrom(), createOrder.getTo(), createOrder.getTravelDate());
-        return ok(orderService.create(createOrder, headers));
+        long start = System.currentTimeMillis();
+
+        OrderController.LOGGER.info("[createNewOrder][Create Order][from {} to {} at {}]",
+                createOrder.getFrom(), createOrder.getTo(), createOrder.getTravelDate());
+
+        HttpEntity result = ok(orderService.create(createOrder, headers));
+
+        long end = System.currentTimeMillis();
+
+        if ("true".equals(System.getenv("PYTHIA_FINE_TRACE"))) {
+            long latency = end - start;
+            OrderController.LOGGER.info(
+                    "[PYTHIA_FINE_TRACE] service=ts-order-service endpoint=createOrder latency_ms={}",
+                    latency
+            );
+        }
+
+        return result;
     }
 
     @CrossOrigin(origins = "*")

@@ -1,15 +1,15 @@
 Perfect. Below is your **complete, corrected, production-ready documentation** including:
 
-* Full clean setup
-* All ports (local + VM public)
-* Firewall configuration
-* Port-forward mapping table
-* Restart scenarios
-* Debug checklist
-* Common failure fixes
-* KIND-specific notes
-* Grafana access
-* Gateway explanation
+- Full clean setup
+- All ports (local + VM public)
+- Firewall configuration
+- Port-forward mapping table
+- Restart scenarios
+- Debug checklist
+- Common failure fixes
+- KIND-specific notes
+- Grafana access
+- Gateway explanation
 
 You can save this as `RUNBOOK.md`.
 
@@ -47,9 +47,9 @@ Laptop → Public VM IP → VM → Docker (KIND node) → Kubernetes
 
 Because KIND runs Kubernetes inside Docker:
 
-* NodePort does NOT behave like normal Kubernetes
-* You MUST use `kubectl port-forward`
-* And bind with `--address 0.0.0.0`
+- NodePort does NOT behave like normal Kubernetes
+- You MUST use `kubectl port-forward`
+- And bind with `--address 0.0.0.0`
 
 ---
 
@@ -71,12 +71,12 @@ kind delete cluster --name train-ticket
 
 This removes:
 
-* All pods
-* PVCs
-* Services
-* Helm releases
-* CPU allocations
-* Everything
+- All pods
+- PVCs
+- Services
+- Helm releases
+- CPU allocations
+- Everything
 
 This solved your earlier CPU scheduling issue.
 
@@ -147,8 +147,8 @@ kubectl describe node | grep -A5 Allocatable
 
 Ensure:
 
-* CPU ≥ 8
-* Memory ≥ 32Gi
+- CPU ≥ 8
+- Memory ≥ 32Gi
 
 ---
 
@@ -163,15 +163,15 @@ bash hack/deploy/deploy.sh train-ticket "--with-monitoring --with-tracing"
 
 This installs:
 
-* Nacos (3 replicas)
-* MySQL clusters
-* RabbitMQ
-* 40+ microservices
-* Elasticsearch
-* SkyWalking
-* SkyWalking UI
-* Prometheus
-* Grafana
+- Nacos (3 replicas)
+- MySQL clusters
+- RabbitMQ
+- 40+ microservices
+- Elasticsearch
+- SkyWalking
+- SkyWalking UI
+- Prometheus
+- Grafana
 
 Wait:
 
@@ -184,6 +184,40 @@ Proceed only when everything shows:
 ```
 1/1 Running
 ```
+
+---
+
+# Generating Traces
+
+Open up a **VM Terminal 1** run
+kubectl -n train-ticket port-forward svc/ts-ui-dashboard 8080:8080 --address 127.0.0.1
+
+leave it running - this runs the train-ticket on port 8080
+
+In **VM Terminal 2** run
+Do jq --version if jq does not exist run
+sudo apt update
+sudo apt install -y jq
+
+then do chmod +x generate_traces.sh, and then ./generate_traces.sh
+
+## Optional: Watches traces in SkyWalking
+
+In **VM Terminal 3** run
+kubectl -n train-ticket port-forward svc/skywalking-ui 18080:8080 --address 127.0.0.1
+Then open skywalking through your usual access method (web browser)
+
+# Exporting Traces
+
+In a new **VM Terminal** run
+kubectl -n train-ticket port-forward svc/elasticsearch 9200:9200 --address 127.0.0.1
+
+Then in a new **VM Terminal** do
+curl http://127.0.0.1:9200 to check if it works
+
+Then run
+chmod +x export_traces.sh
+./export_traces.sh
 
 ---
 
@@ -461,14 +495,14 @@ All should respond.
 
 Inside KIND:
 
-* 40+ microservices
-* 2 MySQL clusters
-* Nacos (3 replicas)
-* RabbitMQ
-* Elasticsearch
-* SkyWalking
-* Prometheus
-* Grafana
+- 40+ microservices
+- 2 MySQL clusters
+- Nacos (3 replicas)
+- RabbitMQ
+- Elasticsearch
+- SkyWalking
+- Prometheus
+- Grafana
 
 All running on a single KIND control-plane node.
 
@@ -502,10 +536,10 @@ All running on a single KIND control-plane node.
 
 If you'd like next, I can create:
 
-* 📄 A clean GitHub-ready README version
-* 🧠 A debugging cheat sheet
-* ☁️ A GKE production deployment guide
-* 🔐 HTTPS + NGINX reverse proxy setup
-* 🛠 Performance tuning guide
+- 📄 A clean GitHub-ready README version
+- 🧠 A debugging cheat sheet
+- ☁️ A GKE production deployment guide
+- 🔐 HTTPS + NGINX reverse proxy setup
+- 🛠 Performance tuning guide
 
 Just tell me what level you want next.
