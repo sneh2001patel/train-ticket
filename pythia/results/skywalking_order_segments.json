@@ -1,0 +1,300 @@
+{
+  "start_time": 1773234838090,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348380900003",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234838090,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348380900003",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348380900002",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234834405,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348344050001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234834405,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348344050001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4148.17732348344050000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234824033,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4144.17732348240330001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234824033,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4144.17732348240330001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4144.17732348240330000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234793917,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4137.17732347939170001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 1,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234793918,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4137.17732347939170001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4137.17732347939170000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234778080,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4130.17732347780800001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234778080,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4130.17732347780800001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4130.17732347780800000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234770462,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4126.17732347704620001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234770462,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4126.17732347704620001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4126.17732347704620000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234737330,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4118.17732347373300001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234737330,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4118.17732347373300001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4118.17732347373300000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773234689570,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4105.17732346895700001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 1,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773234689571,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.4105.17732346895700001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.4105.17732346895700000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233100942,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3780.17732331009420001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233100942,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3780.17732331009420001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3780.17732331009420000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233078985,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3774.17732330789850001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233078985,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3774.17732330789850001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3774.17732330789850000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233055667,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330556670003",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233055667,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330556670003",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330556670002",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233054869,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330548690001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233054869,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330548690001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3768.17732330548690000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233043712,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3763.17732330437120001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233043712,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3763.17732330437120001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3763.17732330437120000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233025498,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3757.17732330254980001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233025498,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3757.17732330254980001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3757.17732330254980000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233005727,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330057270003",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 1,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233005728,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330057270003",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330057270002",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773233005671,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330056710001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773233005671,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330056710001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3751.17732330056710000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773232977952,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3744.17732329779520001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773232977952,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3744.17732329779520001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3744.17732329779520000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773232931811,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3731.17732329318110001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773232931811,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3731.17732329318110001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3731.17732329318110000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773231306206,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313062060003",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773231306206,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313062060003",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313062060002",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
+{
+  "start_time": 1773231304135,
+  "trace_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313041350001",
+  "endpoint_name": "Mysql/JDBI/Connection/close",
+  "latency": 0,
+  "service_id": "dHMtb3JkZXItc2VydmljZQ==.1",
+  "end_time": 1773231304135,
+  "statement": "Mysql/JDBI/Connection/close - 9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313041350001",
+  "service_instance_id": "dHMtb3JkZXItc2VydmljZQ==.1_ODFlZTQ0NjVhODc4NDY5OGFlZTIzZjhmZDE3ZGM1MzlAMTAuMjQ0LjAuODE=",
+  "segment_id": "9b6d60e95e1149a6b4e49d0e60e75baf.3390.17732313041350000",
+  "tags": [
+    "db.instance=ts",
+    "db.type=sql"
+  ]
+}
