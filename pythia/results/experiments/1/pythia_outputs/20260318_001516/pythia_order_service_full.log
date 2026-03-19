@@ -1,0 +1,74 @@
+Picked up JAVA_TOOL_OPTIONS: -javaagent:/skywalking/agent/skywalking-agent.jar
+DEBUG 2026-03-18 05:02:45:515 main AgentPackagePath : The beacon class location is jar:file:/skywalking/agent/skywalking-agent.jar!/org/apache/skywalking/apm/agent/core/boot/AgentPackagePath.class. 
+INFO 2026-03-18 05:02:45:516 main SnifferConfigInitializer : Config file found in /skywalking/agent/config/agent.config. 
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::       (v2.3.12.RELEASE)
+
+2026-03-18 05:03:42.783  INFO 1 --- [           main] order.OrderApplication                   : No active profile set, falling back to default profiles: default
+2026-03-18 05:04:06.176  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-18 05:04:11.115  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4840ms. Found 1 JPA repository interfaces.
+2026-03-18 05:04:12.308  WARN 1 --- [           main] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2026-03-18 05:04:14.726  INFO 1 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=ef1d0b1a-8a17-36e7-a2b7-09241cd1da3b
+2026-03-18 05:04:15.080  INFO 1 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2026-03-18 05:04:15.502  INFO 1 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2026-03-18 05:04:15.531  INFO 1 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2026-03-18 05:04:18.604  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@6968bb65' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-03-18 05:04:18.621  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-03-18 05:04:18.915  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-03-18 05:04:19.718  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationChannelResolver' of type [org.springframework.integration.support.channel.BeanFactoryChannelResolver] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-03-18 05:04:19.721  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-03-18 05:04:34.479  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 12031 (http)
+2026-03-18 05:04:34.623  INFO 1 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-18 05:04:34.624  INFO 1 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.46]
+2026-03-18 05:04:35.053  INFO 1 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-18 05:04:35.053  INFO 1 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 51459 ms
+2026-03-18 05:04:49.113  INFO 1 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-18 05:04:49.678  INFO 1 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.32.Final
+2026-03-18 05:04:53.823  INFO 1 --- [           main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2026-03-18 05:04:54.595  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-18 05:04:58.715  INFO 1 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-18 05:04:58.930  INFO 1 --- [           main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2026-03-18 05:05:04.871  INFO 1 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2026-03-18 05:05:04.932  INFO 1 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-18 05:05:19.984  WARN 1 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-18 05:05:31.086  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 761 ms to scan 1 urls, producing 3 keys and 6 values 
+2026-03-18 05:05:32.187  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 354 ms to scan 1 urls, producing 4 keys and 9 values 
+2026-03-18 05:05:32.372  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 157 ms to scan 1 urls, producing 3 keys and 10 values 
+2026-03-18 05:05:33.318  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 936 ms to scan 159 urls, producing 0 keys and 0 values 
+2026-03-18 05:05:33.410  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 91 ms to scan 1 urls, producing 1 keys and 5 values 
+2026-03-18 05:05:33.580  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 162 ms to scan 1 urls, producing 1 keys and 7 values 
+2026-03-18 05:05:33.769  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 177 ms to scan 1 urls, producing 2 keys and 8 values 
+2026-03-18 05:05:34.964  INFO 1 --- [           main] org.reflections.Reflections              : Reflections took 1131 ms to scan 159 urls, producing 0 keys and 0 values 
+2026-03-18 05:05:42.233  INFO 1 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-03-18 05:05:44.475  INFO 1 --- [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 7fe80f97-cb79-4228-855d-8d6867986ce9
+
+2026-03-18 05:05:45.939  INFO 1 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@146b3bc7, org.springframework.security.web.context.SecurityContextPersistenceFilter@7b3d759f, org.springframework.security.web.header.HeaderWriterFilter@4529b266, org.springframework.security.web.authentication.logout.LogoutFilter@56b5de49, edu.fudan.common.security.jwt.JWTFilter@200cdb37, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@62c4ad40, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2e26841f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@523d6b45, org.springframework.security.web.session.SessionManagementFilter@1d123972, org.springframework.security.web.access.ExceptionTranslationFilter@673ade3d, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5e5d41dc]
+2026-03-18 05:05:46.084  WARN 1 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2026-03-18 05:05:46.084  INFO 1 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2026-03-18 05:05:46.113  WARN 1 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2026-03-18 05:05:46.113  INFO 1 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2026-03-18 05:05:47.241  INFO 1 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2026-03-18 05:05:50.335  INFO 1 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'Nacos-Watch-Task-Scheduler'
+2026-03-18 05:05:57.121  INFO 1 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-03-18 05:05:57.618  INFO 1 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2026-03-18 05:05:57.618  INFO 1 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application-1.errorChannel' has 1 subscriber(s).
+2026-03-18 05:05:57.618  INFO 1 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started bean '_org.springframework.integration.errorLogger'
+2026-03-18 05:05:58.581  INFO 1 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 12031 (http) with context path ''
+2026-03-18 05:05:58.997  INFO 1 --- [           main] c.a.c.n.registry.NacosServiceRegistry    : nacos registry, DEFAULT_GROUP ts-order-service 10.244.0.44:12031 register finished
+2026-03-18 05:05:59.525  INFO 1 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2026-03-18 05:06:00.499  INFO 1 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2026-03-18 05:06:00.693  INFO 1 --- [           main] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2026-03-18 05:06:03.188  INFO 1 --- [           main] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: handleUsingGET_1
+2026-03-18 05:06:03.195  INFO 1 --- [           main] .d.s.w.r.o.CachingOperationNameGenerator : Generating unique operation named: handleUsingGET_2
+2026-03-18 05:06:05.293  INFO 1 --- [           main] order.OrderApplication                   : Started OrderApplication in 171.286 seconds (JVM running for 199.975)
+2026-03-18 05:06:10.526  INFO 1 --- [           main] order.service.OrderServiceImpl           : [initOrder][Init Order Success][OrderId: 5ad7750b-a68b-49c0-a8c0-32776b067703]
+2026-03-18 05:06:10.543  INFO 1 --- [           main] order.service.OrderServiceImpl           : [initOrder][Init Order Success][OrderId: 8177ac5a-61ac-42f4-83f4-bd7b394d0531]
+2026-03-18 05:06:10.633  INFO 1 --- [           main] order.service.OrderServiceImpl           : [initOrder][Init Order Success][OrderId: d3c91694-d5b8-424c-9974-e14c89226e49]
