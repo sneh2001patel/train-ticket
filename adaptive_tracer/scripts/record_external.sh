@@ -11,6 +11,8 @@ OUT_DIR=""
 DURATION="60"
 LOAD_CMD=""
 KIND_CONTAINER_PID=""
+TRACE_CMD=()
+LOAD_EXIT_CODE=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -99,6 +101,22 @@ if [[ ${#TRACE_PIDS[@]} -eq 0 ]]; then
   exit 1
 fi
 
+if [[ -n "$SELECTION_FILE" ]]; then
+  REQUESTED_COUNT="$(
+    python3 - "$TARGETS_JSON" <<'PY'
+import json
+import sys
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+    data = json.load(handle)
+print(len(data.get("requested_services", [])))
+PY
+  )"
+  if [[ "$REQUESTED_COUNT" -eq 0 ]]; then
+    echo "Selection file did not contain any services; refusing to trace the full namespace." >&2
+    exit 1
+  fi
+fi
+
 if [[ -n "$KIND_CONTAINER" ]]; then
   KIND_CONTAINER_PID="$(docker inspect --format '{{.State.Pid}}' "$KIND_CONTAINER")"
   if [[ -z "$KIND_CONTAINER_PID" || "$KIND_CONTAINER_PID" == "0" ]]; then
@@ -110,7 +128,7 @@ fi
 LIVE_PIDS=()
 for pid in "${TRACE_PIDS[@]}"; do
   if [[ -n "$KIND_CONTAINER_PID" ]]; then
-    if sudo nsenter -t "$KIND_CONTAINER_PID" -p -- bash -lc "kill -0 $pid" >/dev/null 2>&1; then
+    if docker exec "$KIND_CONTAINER" sh -lc "kill -0 $pid" >/dev/null 2>&1; then
       LIVE_PIDS+=("$pid")
     else
       echo "[adaptive-tracer] skipping dead KIND-namespace PID $pid"
@@ -129,18 +147,42 @@ if [[ ${#LIVE_PIDS[@]} -eq 0 ]]; then
   exit 1
 fi
 
-P_ARGS=()
+TRACE_TARGET_IDS=()
 for pid in "${LIVE_PIDS[@]}"; do
-  P_ARGS+=(-p "$pid")
+  if [[ -n "$KIND_CONTAINER_PID" ]]; then
+    mapfile -t TASK_IDS < <(
+      docker exec "$KIND_CONTAINER" sh -lc "ls /proc/$pid/task 2>/dev/null | sort -n"
+    )
+  else
+    mapfile -t TASK_IDS < <(ls "/proc/$pid/task" 2>/dev/null | sort -n)
+  fi
+
+  if [[ ${#TASK_IDS[@]} -eq 0 ]]; then
+    TASK_IDS=("$pid")
+  fi
+
+  for task_id in "${TASK_IDS[@]}"; do
+    TRACE_TARGET_IDS+=("$task_id")
+  done
+done
+
+if [[ ${#TRACE_TARGET_IDS[@]} -eq 0 ]]; then
+  echo "No traceable thread IDs resolved from live PIDs." >&2
+  exit 1
+fi
+
+P_ARGS=()
+for target_id in "${TRACE_TARGET_IDS[@]}"; do
+  P_ARGS+=(-p "$target_id")
 done
 
 START_TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-python3 - "$TARGETS_JSON" "$TRACE_META" "$START_TS" "$DURATION" "$LOAD_CMD" <<'PY'
+python3 - "$TARGETS_JSON" "$TRACE_META" "$START_TS" "$DURATION" "$LOAD_CMD" "${#TRACE_TARGET_IDS[@]}" <<'PY'
 import json
 import sys
 
-targets_path, meta_path, start_ts, duration, load_cmd = sys.argv[1:]
+targets_path, meta_path, start_ts, duration, load_cmd, resolved_thread_count = sys.argv[1:]
 with open(targets_path, "r", encoding="utf-8") as handle:
     targets = json.load(handle)
 
@@ -148,9 +190,11 @@ meta = {
     "start_time": start_ts,
     "duration_seconds": int(duration),
     "load_cmd": load_cmd,
+    "trace_status": "starting",
     "namespace": targets.get("namespace"),
     "requested_services": targets.get("requested_services", []),
     "resolved_target_count": len(targets.get("resolved_targets", [])),
+    "resolved_thread_count": int(resolved_thread_count),
     "resolved_targets": targets.get("resolved_targets", []),
 }
 
@@ -158,19 +202,25 @@ with open(meta_path, "w", encoding="utf-8") as handle:
     json.dump(meta, handle, indent=2)
 PY
 
+TRACE_CMD=(
+  strace
+  -ff
+  -tt
+  -T
+  -s 256
+  -yy
+  -e trace=network,desc,read,write,futex,clone,execve,epoll_wait,epoll_ctl,poll,ppoll,select,accept,accept4,openat,close
+  -o "$OUT_DIR/strace.log"
+  "${P_ARGS[@]}"
+)
+
 echo "[adaptive-tracer] attaching strace to ${#LIVE_PIDS[@]} target processes..."
 if [[ -n "$KIND_CONTAINER_PID" ]]; then
   echo "[adaptive-tracer] entering KIND PID namespace via host PID $KIND_CONTAINER_PID"
   sudo nsenter -t "$KIND_CONTAINER_PID" -p -- \
-    strace -ff -tt -T \
-      -e trace=network,read,write,futex,clone,execve \
-      -o "$OUT_DIR/strace.log" \
-      "${P_ARGS[@]}" &
+    "${TRACE_CMD[@]}" &
 else
-  sudo strace -ff -tt -T \
-    -e trace=network,read,write,futex,clone,execve \
-    -o "$OUT_DIR/strace.log" \
-    "${P_ARGS[@]}" &
+  sudo "${TRACE_CMD[@]}" &
 fi
 STRACE_PID=$!
 
@@ -178,15 +228,41 @@ cleanup() {
   sudo kill "$STRACE_PID" 2>/dev/null || true
   wait "$STRACE_PID" 2>/dev/null || true
 
+  sudo chown "$(id -u):$(id -g)" "$OUT_DIR"/strace.log.* 2>/dev/null || true
+
   END_TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-  python3 - "$TRACE_META" "$END_TS" <<'PY'
+  python3 - "$TRACE_META" "$END_TS" "$LOAD_EXIT_CODE" "$OUT_DIR" <<'PY'
 import json
+import os
+from pathlib import Path
 import sys
 
-meta_path, end_ts = sys.argv[1:]
+meta_path, end_ts, load_exit_code, out_dir = sys.argv[1:]
 with open(meta_path, "r", encoding="utf-8") as handle:
     meta = json.load(handle)
+
+artifact_stats = []
+for path in sorted(Path(out_dir).glob("strace.log.*")):
+    line_count = 0
+    with open(path, "r", encoding="utf-8", errors="replace") as handle:
+        for line_count, _ in enumerate(handle, start=1):
+            pass
+    artifact_stats.append(
+        {
+            "file": path.name,
+            "size_bytes": path.stat().st_size,
+            "line_count": line_count,
+        }
+    )
+
 meta["end_time"] = end_ts
+meta["load_exit_code"] = int(load_exit_code)
+meta["trace_status"] = "complete"
+meta["trace_artifacts"] = artifact_stats
+meta["trace_artifact_count"] = len(artifact_stats)
+meta["trace_artifact_nonempty_count"] = sum(
+    1 for item in artifact_stats if item["line_count"] > 1 or item["size_bytes"] > 80
+)
 with open(meta_path, "w", encoding="utf-8") as handle:
     json.dump(meta, handle, indent=2)
 PY
@@ -195,13 +271,35 @@ PY
 trap cleanup EXIT
 
 sleep 2
+if ! kill -0 "$STRACE_PID" >/dev/null 2>&1; then
+  echo "strace exited before the trace window started." >&2
+  exit 1
+fi
+
+TRACE_START_EPOCH="$(date +%s)"
+TRACE_END_EPOCH=$((TRACE_START_EPOCH + DURATION))
 
 if [[ -n "$LOAD_CMD" ]]; then
   echo "[adaptive-tracer] running load command..."
-  bash -lc "$LOAD_CMD"
+  set +e
+  timeout --signal TERM --kill-after=5 "${DURATION}s" bash -lc "$LOAD_CMD"
+  LOAD_EXIT_CODE=$?
+  set -e
+  if [[ "$LOAD_EXIT_CODE" -eq 124 ]]; then
+    echo "[adaptive-tracer] load command reached the trace window timeout"
+  elif [[ "$LOAD_EXIT_CODE" -ne 0 ]]; then
+    echo "[adaptive-tracer] load command exited with status $LOAD_EXIT_CODE" >&2
+  fi
 else
   echo "[adaptive-tracer] no load command supplied; sleeping for ${DURATION}s"
-  sleep "$DURATION"
+  LOAD_EXIT_CODE=0
+fi
+
+NOW_EPOCH="$(date +%s)"
+if (( NOW_EPOCH < TRACE_END_EPOCH )); then
+  REMAINING_SECONDS=$((TRACE_END_EPOCH - NOW_EPOCH))
+  echo "[adaptive-tracer] keeping strace attached for ${REMAINING_SECONDS}s more"
+  sleep "$REMAINING_SECONDS"
 fi
 
 echo "[adaptive-tracer] recording complete"

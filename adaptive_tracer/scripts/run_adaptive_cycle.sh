@@ -12,7 +12,7 @@ TOP_K="3"
 MIN_COUNT="20"
 DURATION="60"
 LOAD_CMD=""
-EXCLUDE_REGEX='^(Mysql/|/actuator|/swagger|/v2/api-docs|/webjars)'
+EXCLUDE_REGEX='^(Mysql/|HikariCP/|/actuator|/swagger|/v2/api-docs|/webjars)'
 TRACE_INDEX=""
 COARSE_LOAD_CMD=""
 FINE_LOAD_CMD=""
@@ -121,6 +121,11 @@ if [[ ! -f "$INPUT" ]]; then
   exit 1
 fi
 
+if [[ ! -s "$INPUT" ]]; then
+  echo "Input trace file is empty: $INPUT" >&2
+  exit 1
+fi
+
 echo "[adaptive-tracer] selecting suspicious services from coarse traces..."
 python3 "$SCRIPT_DIR/select_targets.py" \
   --input "$INPUT" \
@@ -138,6 +143,21 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
 for service in data.get("selected_services", []):
     print(f"  - {service}")
 PY
+
+SELECTED_COUNT="$(
+  python3 - "$SELECTION_FILE" <<'PY'
+import json
+import sys
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+    data = json.load(handle)
+print(len(data.get("selected_services", [])))
+PY
+)"
+
+if [[ "$SELECTED_COUNT" -eq 0 ]]; then
+  echo "No services were selected from coarse traces; aborting before fine tracing." >&2
+  exit 1
+fi
 
 RECORD_ARGS=(
   bash "$SCRIPT_DIR/record_external.sh"
