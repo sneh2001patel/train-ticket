@@ -35,3 +35,6 @@ venv.bak/
 
 # Docker Loaded Files
 ts-order-service-pythia.tar
+
+# Generated tracer output can include auth tokens and should never be committed.
+adaptive_tracer/results/
