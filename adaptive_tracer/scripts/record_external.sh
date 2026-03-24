@@ -13,6 +13,11 @@ LOAD_CMD=""
 KIND_CONTAINER_PID=""
 TRACE_CMD=()
 LOAD_EXIT_CODE=0
+COARSE_SOURCE=""
+COARSE_INPUT_FILE=""
+COARSE_RECORD_COUNT="0"
+OTEL_ENDPOINT=""
+OTEL_LOOKBACK_SECONDS=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -42,6 +47,26 @@ while [[ $# -gt 0 ]]; do
       ;;
     --load-cmd)
       LOAD_CMD="$2"
+      shift 2
+      ;;
+    --coarse-source)
+      COARSE_SOURCE="$2"
+      shift 2
+      ;;
+    --coarse-input-file)
+      COARSE_INPUT_FILE="$2"
+      shift 2
+      ;;
+    --coarse-record-count)
+      COARSE_RECORD_COUNT="$2"
+      shift 2
+      ;;
+    --otel-endpoint)
+      OTEL_ENDPOINT="$2"
+      shift 2
+      ;;
+    --otel-lookback-seconds)
+      OTEL_LOOKBACK_SECONDS="$2"
       shift 2
       ;;
     *)
@@ -178,11 +203,23 @@ done
 
 START_TS="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
-python3 - "$TARGETS_JSON" "$TRACE_META" "$START_TS" "$DURATION" "$LOAD_CMD" "${#TRACE_TARGET_IDS[@]}" <<'PY'
+python3 - "$TARGETS_JSON" "$TRACE_META" "$START_TS" "$DURATION" "$LOAD_CMD" "${#TRACE_TARGET_IDS[@]}" "$COARSE_SOURCE" "$COARSE_INPUT_FILE" "$COARSE_RECORD_COUNT" "$OTEL_ENDPOINT" "$OTEL_LOOKBACK_SECONDS" <<'PY'
 import json
 import sys
 
-targets_path, meta_path, start_ts, duration, load_cmd, resolved_thread_count = sys.argv[1:]
+(
+    targets_path,
+    meta_path,
+    start_ts,
+    duration,
+    load_cmd,
+    resolved_thread_count,
+    coarse_source,
+    coarse_input_file,
+    coarse_record_count,
+    otel_endpoint,
+    otel_lookback_seconds,
+) = sys.argv[1:]
 with open(targets_path, "r", encoding="utf-8") as handle:
     targets = json.load(handle)
 
@@ -193,9 +230,16 @@ meta = {
     "trace_status": "starting",
     "namespace": targets.get("namespace"),
     "requested_services": targets.get("requested_services", []),
+    "selected_services": targets.get("requested_services", []),
     "resolved_target_count": len(targets.get("resolved_targets", [])),
     "resolved_thread_count": int(resolved_thread_count),
     "resolved_targets": targets.get("resolved_targets", []),
+    "coarse_source": coarse_source or None,
+    "coarse_input_file": coarse_input_file or None,
+    "coarse_record_count": int(coarse_record_count or 0),
+    "selection_input_path": coarse_input_file or None,
+    "otel_endpoint": otel_endpoint or None,
+    "otel_lookback_seconds": int(otel_lookback_seconds or 0),
 }
 
 with open(meta_path, "w", encoding="utf-8") as handle:

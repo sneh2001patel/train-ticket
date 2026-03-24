@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import base64
 import json
 import math
 import re
@@ -10,11 +9,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+ENTRY_SPAN_KINDS = {"SERVER", "CONSUMER"}
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Rank suspicious services from coarse trace JSONL."
+        description="Rank suspicious services from normalized coarse trace JSONL."
     )
-    parser.add_argument("--input", required=True, help="Path to JSONL trace export")
+    parser.add_argument("--input", required=True, help="Path to normalized coarse JSONL")
     parser.add_argument(
         "--output",
         required=True,
@@ -33,9 +35,14 @@ def parse_args():
         help="Minimum samples required before a service can be selected",
     )
     parser.add_argument(
-        "--exclude-endpoint-regex",
+        "--exclude-operation-regex",
         default=r"^(Mysql/|HikariCP/|/actuator|/swagger|/v2/api-docs|/webjars)",
-        help="Regex for noisy coarse endpoints to exclude from scoring",
+        help="Regex for noisy operations to exclude from scoring",
+    )
+    parser.add_argument(
+        "--exclude-endpoint-regex",
+        dest="exclude_operation_regex",
+        help=argparse.SUPPRESS,
     )
     return parser.parse_args()
 
@@ -51,37 +58,35 @@ def safe_float(value):
         return None
 
 
-def decode_service_name(raw):
-    if not raw:
-        return "UNKNOWN_SERVICE"
-    if "." in raw:
-        candidate = raw.split(".", 1)[0]
-    else:
-        candidate = raw
-    try:
-        decoded = base64.b64decode(candidate).decode("utf-8")
-        if decoded:
-            return decoded
-    except Exception:
-        pass
-    return raw
+def normalize_span_kind(value):
+    text = str(value or "UNSPECIFIED").upper()
+    for prefix in ("SPAN_KIND_", "SPAN_"):
+        if text.startswith(prefix):
+            text = text[len(prefix):]
+    return text
 
 
-def extract_service(row):
-    return decode_service_name(
-        row.get("service")
-        or row.get("serviceCode")
-        or row.get("service_code")
-        or row.get("service_id")
-        or row.get("serviceId")
-    )
+def load_rows(path):
+    rows = []
+    invalid_json_rows = 0
+    with open(path, "r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                invalid_json_rows += 1
+    return rows, invalid_json_rows
 
 
-def extract_endpoint(row):
+def extract_operation(row):
     return (
-        row.get("endpoint")
-        or row.get("endpointName")
-        or row.get("endpoint_name")
+        row.get("http_route")
+        or row.get("operation")
+        or row.get("http_target")
+        or row.get("rpc_service")
         or "UNKNOWN_ENDPOINT"
     )
 
@@ -107,6 +112,24 @@ def cov(values):
     if avg == 0:
         return 0.0
     return stddev(values) / avg
+
+
+def percentile(sorted_values, q):
+    if not sorted_values:
+        return 0.0
+    if len(sorted_values) == 1:
+        return float(sorted_values[0])
+
+    index = (len(sorted_values) - 1) * q
+    lower = math.floor(index)
+    upper = math.ceil(index)
+    if lower == upper:
+        return float(sorted_values[lower])
+
+    lower_value = sorted_values[lower]
+    upper_value = sorted_values[upper]
+    weight = index - lower
+    return lower_value + (upper_value - lower_value) * weight
 
 
 def summarize(values):
@@ -136,31 +159,12 @@ def summarize(values):
     }
 
 
-def percentile(sorted_values, q):
-    if not sorted_values:
-        return 0.0
-    if len(sorted_values) == 1:
-        return float(sorted_values[0])
-
-    index = (len(sorted_values) - 1) * q
-    lower = math.floor(index)
-    upper = math.ceil(index)
-    if lower == upper:
-        return float(sorted_values[lower])
-
-    lower_value = sorted_values[lower]
-    upper_value = sorted_values[upper]
-    weight = index - lower
-    return lower_value + (upper_value - lower_value) * weight
-
-
 def score_service(summary, baseline):
     count_weight = math.log10(summary["count"] + 1)
     mean_ratio = summary["mean_latency"] / baseline["mean_latency"]
     p95_ratio = summary["p95_latency"] / baseline["p95_latency"]
     p99_ratio = summary["p99_latency"] / baseline["p99_latency"]
 
-    # Favor sustained shifts (mean/p95/p99) while still rewarding instability.
     combined_signal = (
         (mean_ratio * 0.40)
         + (p95_ratio * 0.30)
@@ -170,52 +174,80 @@ def score_service(summary, baseline):
     return round(combined_signal * count_weight, 6)
 
 
-def endpoint_score(summary, baseline):
+def score_operation(summary, baseline):
     count_weight = math.log10(summary["count"] + 1)
     mean_ratio = summary["mean_latency"] / baseline["mean_latency"]
     p95_ratio = summary["p95_latency"] / baseline["p95_latency"]
-    return round(((mean_ratio * 0.55) + (p95_ratio * 0.35) + (summary["cov"] * 0.10)) * count_weight, 6)
+    return round(
+        ((mean_ratio * 0.55) + (p95_ratio * 0.35) + (summary["cov"] * 0.10))
+        * count_weight,
+        6,
+    )
 
 
-def load_rows(path):
-    rows = []
-    with open(path, "r", encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                rows.append(json.loads(line))
-            except json.JSONDecodeError:
-                continue
-    return rows
+def select_service_rows(rows):
+    grouped = defaultdict(list)
+    for row in rows:
+        grouped[row["service"]].append(row)
+
+    selected = {}
+    filtered_non_entry = 0
+    for service, service_rows in grouped.items():
+        entry_rows = [
+            row for row in service_rows if str(row.get("span_kind", "")).upper() in ENTRY_SPAN_KINDS
+        ]
+        chosen_rows = entry_rows or service_rows
+        filtered_non_entry += max(0, len(service_rows) - len(chosen_rows))
+        selected[service] = chosen_rows
+    return selected, filtered_non_entry
 
 
 def main():
     args = parse_args()
     input_path = Path(args.input)
     output_path = Path(args.output)
-    exclude_re = re.compile(args.exclude_endpoint_regex)
+    exclude_re = re.compile(args.exclude_operation_regex)
 
-    rows = load_rows(input_path)
-    service_latencies = defaultdict(list)
-    endpoint_latencies = defaultdict(list)
+    rows, invalid_json_rows = load_rows(input_path)
+    normalized_rows = []
     skipped_rows = 0
+    skipped_missing_service = 0
     endpoint_min_count = max(5, min(args.min_count, 25))
 
     for row in rows:
-        latency = safe_float(row.get("latency"))
+        latency = safe_float(row.get("latency_ms"))
         if latency is None:
             skipped_rows += 1
             continue
 
-        service = extract_service(row)
-        endpoint = extract_endpoint(row)
-        if exclude_re.search(endpoint):
+        service = row.get("service")
+        if not service:
+            skipped_missing_service += 1
             continue
 
-        service_latencies[service].append(latency)
-        endpoint_latencies[(service, endpoint)].append(latency)
+        normalized_rows.append(
+            {
+                "service": str(service),
+                "operation": extract_operation(row),
+                "latency_ms": latency,
+                "span_kind": normalize_span_kind(row.get("span_kind")),
+            }
+        )
+
+    service_rows, filtered_non_entry = select_service_rows(normalized_rows)
+
+    service_latencies = defaultdict(list)
+    operation_latencies = defaultdict(list)
+    filtered_operations = 0
+
+    for service, rows_for_service in service_rows.items():
+        for row in rows_for_service:
+            operation = row["operation"]
+            if exclude_re.search(operation):
+                filtered_operations += 1
+                continue
+            service_latencies[service].append(row["latency_ms"])
+            operation_latencies[(service, operation)].append(row["latency_ms"])
 
     baseline_summary = summarize(
         [latency for latencies in service_latencies.values() for latency in latencies]
@@ -232,40 +264,47 @@ def main():
         if summary["count"] < args.min_count:
             continue
 
-        top_endpoint = None
-        top_endpoint_summary = None
-        top_endpoint_score = None
-        fallback_endpoint = None
-        fallback_endpoint_summary = None
-        fallback_endpoint_score = None
-        for (endpoint_service, endpoint_name), endpoint_values in endpoint_latencies.items():
-            if endpoint_service != service:
+        top_operation = None
+        top_operation_summary = None
+        top_operation_score = None
+        fallback_operation = None
+        fallback_operation_summary = None
+        fallback_operation_score = None
+
+        for (operation_service, operation_name), operation_values in operation_latencies.items():
+            if operation_service != service:
                 continue
-            candidate = summarize(endpoint_values)
-            candidate_score = endpoint_score(candidate, baseline)
-            if fallback_endpoint_score is None or candidate_score > fallback_endpoint_score:
-                fallback_endpoint = endpoint_name
-                fallback_endpoint_summary = candidate
-                fallback_endpoint_score = candidate_score
+            candidate = summarize(operation_values)
+            candidate_score = score_operation(candidate, baseline)
+            if (
+                fallback_operation_score is None
+                or candidate_score > fallback_operation_score
+            ):
+                fallback_operation = operation_name
+                fallback_operation_summary = candidate
+                fallback_operation_score = candidate_score
             if candidate["count"] < endpoint_min_count:
                 continue
-            if top_endpoint_score is None or candidate_score > top_endpoint_score:
-                top_endpoint = endpoint_name
-                top_endpoint_summary = candidate
-                top_endpoint_score = candidate_score
+            if top_operation_score is None or candidate_score > top_operation_score:
+                top_operation = operation_name
+                top_operation_summary = candidate
+                top_operation_score = candidate_score
 
-        if top_endpoint is None:
-            top_endpoint = fallback_endpoint
-            top_endpoint_summary = fallback_endpoint_summary
-            top_endpoint_score = fallback_endpoint_score
+        if top_operation is None:
+            top_operation = fallback_operation
+            top_operation_summary = fallback_operation_summary
+            top_operation_score = fallback_operation_score
 
         entry = {
             "service": service,
             "score": score_service(summary, baseline),
             **summary,
-            "top_endpoint": top_endpoint,
-            "top_endpoint_score": top_endpoint_score or 0.0,
-            "top_endpoint_summary": top_endpoint_summary or summarize([]),
+            "top_endpoint": top_operation,
+            "top_endpoint_score": top_operation_score or 0.0,
+            "top_endpoint_summary": top_operation_summary or summarize([]),
+            "top_operation": top_operation,
+            "top_operation_score": top_operation_score or 0.0,
+            "top_operation_summary": top_operation_summary or summarize([]),
         }
         ranked.append(entry)
 
@@ -281,13 +320,17 @@ def main():
         "selection_strategy": {
             "top_k": args.top_k,
             "min_count": args.min_count,
-            "exclude_endpoint_regex": args.exclude_endpoint_regex,
+            "exclude_operation_regex": args.exclude_operation_regex,
         },
         "global_baseline": baseline_summary,
         "row_stats": {
             "rows_loaded": len(rows),
+            "rows_invalid_json": invalid_json_rows,
             "rows_skipped_invalid_latency": skipped_rows,
-            "services_considered": len(service_latencies),
+            "rows_skipped_missing_service": skipped_missing_service,
+            "rows_filtered_non_entry_spans": filtered_non_entry,
+            "rows_filtered_noisy_operations": filtered_operations,
+            "services_considered": len(service_rows),
             "services_ranked": len(ranked),
         },
         "selected_services": [item["service"] for item in selected],
